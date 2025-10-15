@@ -35,7 +35,7 @@ def test_transformer(
     transformer_mlp_drop: float = 0.2,
     n_final_layers: int = 0,
     final_dropout: float = 0.0,
-) -> pd.DataFrame:
+) -> Tuple:
     """Train model and evaluate on the test set, with quirks.
 
     A transformer is trained on data from the base experiment. No experimental head is used.

@@ -1,4 +1,7 @@
-"""Evaluate single mlp on test set."""
+"""Evaluate a linear model on test sets while only training on base data.
+
+No per-experiment heads are used.
+"""
 from typing import Final, List, Tuple
 from itertools import product
 import torch
@@ -24,7 +27,18 @@ def test_linear(
     n_epochs: int = 1000,
     grad_clip: int = 300,
 ) -> pd.DataFrame:
-    """Train model and evaluate."""
+    """Train model and evaluate on the test set, with quirks.
+
+    A linear model is trained on data from the base experiment. No experimental head is used.
+
+    This function returns the best_epoch, the best  validation score, a model, 
+    a dataframe describing training, and a dataframe with the test predictions.
+    However, the test predictions are obtained from the model at the end of
+    training, not that of the returned epoch index. This function primarily makes
+    sense in the context of the "helper" function.
+
+    The arguments control the network architecture and training process.
+    """
 
     train_dataset, valid_dataset = get_datasets(train_specs=['base'], val_specs=['base'], device=DEVICE, feat_type="onehot")
 
@@ -74,6 +88,12 @@ def test_linear(
 
 
 def helper(seed: int, **kwargs):
+    """Evaluate a model.
+
+    First determines the optimal number of training epochs and then retrains.
+
+    Returns the model, the validation score, and the predictions on the test set.
+    """
     torch.manual_seed(seed)
     best_epoch, _, _, _, _ = test_linear(
             **kwargs
@@ -92,6 +112,12 @@ def helper(seed: int, **kwargs):
 
 
 def run(attempt_seeds: Tuple= (1234231, 54636, 2931243)) -> None:
+    """Train a model using a given set of hypers n times and evaluate the best.
+
+    Note that n_epochs is here the maximum number of epochs attempted; each run
+    uses early stopping to determine the optimal number of epochs to use for
+    the saved model.
+    """
     wdecay = 0.0005
     n_epochs = 400
     lr = 1e-4
@@ -112,4 +138,4 @@ def run(attempt_seeds: Tuple= (1234231, 54636, 2931243)) -> None:
 
 
 if __name__ == "__main__":
-    scan()
+    run()
