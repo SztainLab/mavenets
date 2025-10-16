@@ -1,4 +1,4 @@
-"""Evaluate a fixed MLP architecture on test sets while only training on base data.
+"""Evaluate a fixed MLP architecture on test sets while only training on N501Y data.
 
 No per-experiment heads are used.
 """
@@ -30,7 +30,7 @@ def test_mlp(
 ) -> Tuple:
     """Train model and evaluate on the test set, with quirks.
 
-    A MLP is trained on data from the base experiment. No experimental head is used.
+    A MLP is trained on data from the N501Y experiment. No experimental head is used.
 
     This function returns the best_epoch, the best  validation score, a model, 
     a dataframe describing training, and a dataframe with the test predictions.
@@ -42,7 +42,7 @@ def test_mlp(
     """
 
     # collate base dataset
-    train_dataset, valid_dataset = get_datasets(train_specs=['base'], val_specs=['base'], device=DEVICE, feat_type="onehot")
+    train_dataset, valid_dataset = get_datasets(train_specs=['N501Y'], val_specs=['N501Y'], device=DEVICE, feat_type="onehot")
 
     report_datasets = {}
     for spec in DATA_SPECS:
@@ -122,10 +122,10 @@ def run(attempt_seeds: Tuple= (1234231, 54636, 2931243)) -> None:
     uses early stopping to determine the optimal number of epochs to use for
     the saved model.
     """
-    layer_sel =  [8, 64, 32]
-    wdecay = 0.0005
+    layer_sel =  [8, 8, 8]
+    wdecay = 0.001
     n_epochs = 300 # this the max number of epochs considered; early stopping is used.
-    lr = 1e-4
+    lr = 3e-4
     record = {}
     for seed in attempt_seeds:
         model, valid, test_pred = helper(
@@ -138,7 +138,7 @@ def run(attempt_seeds: Tuple= (1234231, 54636, 2931243)) -> None:
         record.update({valid: (model, test_pred)})
     best_model, best_table = record[min(record.keys())]
     print("val from random inits:", list(record.keys()))
-    core_name = "TESTEVAL_mlp_l{}_wdecay{}_learningrate{}_baseonly_nulltuner_multiattempt".format(repr(layer_sel), wdecay, lr, n_epochs)
+    core_name = "TESTEVAL_mlp_l{}_wdecay{}_learningrate{}_N501Yonly_nulltuner_multiattempt".format(repr(layer_sel), wdecay, lr, n_epochs)
     best_table.to_csv(core_name+".csv")
     torch.save(best_model, core_name+".pt")
 
