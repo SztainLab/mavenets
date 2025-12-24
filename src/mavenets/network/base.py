@@ -317,6 +317,7 @@ class MLP(nn.Module):
         activation_class: Callable[[], nn.Module] = nn.ReLU,
         pre_flatten: bool = False,
         post_squeeze: bool = False,
+        dropout: float = 0.0,
     ) -> None:
         """Create layers.
 
@@ -332,11 +333,13 @@ class MLP(nn.Module):
             Callable that returns an activation function (not an activation function
             itself, likely a class).
         pre_flatten:
-            If True, a nn.Flatten method (with default arguments) is applied before 
+            If True, a nn.Flatten method (with default arguments) is applied before
             network calculations.
         post_squeeze:
-            If True, squeeze is called on the network output. May cause dimensional 
+            If True, squeeze is called on the network output. May cause dimensional
             differences on size-1 batches.
+        dropout:
+            If >0.0, dropout with this probability is applied after each activation.
 
         """
         super().__init__()
@@ -350,6 +353,8 @@ class MLP(nn.Module):
         for next_size in hidden_sizes:
             transforms.append(nn.Linear(current_size, next_size))
             transforms.append(activation_class())
+            if dropout > 0.0:
+                transforms.append(nn.Dropout(p=dropout))
             current_size = next_size
         transforms.append(nn.Linear(current_size, out_size))
         self.network = nn.Sequential(*transforms)
