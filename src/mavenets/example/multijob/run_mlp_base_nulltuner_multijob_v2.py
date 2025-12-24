@@ -57,6 +57,7 @@ def test_mlp(
     eval_batch_size: int = int(2**11),
     learning_rate: float = 3e-4,
     weight_decay: float = 0.005,
+    dropout: float = 0.0,
     n_epochs: int = 1000,
     grad_clip: int = 300,
 ) -> Tuple[int, float, pd.DataFrame]:
@@ -77,6 +78,7 @@ def test_mlp(
         hidden_sizes=hidden_layer_sizes,
         pre_flatten=True,
         post_squeeze=True,
+        dropout=dropout
     )
     model = NullTuner(underlying_model).to(DEVICE)
     opter = torch.optim.AdamW(
@@ -123,7 +125,7 @@ def scan(replica: int, total_n_replicas: int) -> None:
                       total_n_replicas=total_n_replicas,
                       shuffle=True)
 
-    for layer_sel,wdecay,lr in tasks:
+    for layer_sel,wdecay,lr,dropout in tasks:
         name = "mlp_l{}_wdecay{}_lr{}_base_nulltuner.csv".format(repr(layer_sel), wdecay, lr)
         if Path(name).is_file():
             continue
@@ -131,5 +133,6 @@ def scan(replica: int, total_n_replicas: int) -> None:
             hidden_layer_sizes=layer_sel,
             weight_decay=wdecay,
             learning_rate=lr,
+            dropout=dropout,
         )
         table.to_csv(name)
