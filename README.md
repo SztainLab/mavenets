@@ -14,7 +14,7 @@ conda activate ./env
 conda install pyg -c pyg
 pip install triton
 mkdir -p ./src
-git clone git@github.com:alekepd/mavenets.git ./src
+git clone https://github.com/SztainLab/mavenets.git ./src
 pip install -e ./src
 ```
 
@@ -29,7 +29,7 @@ pip install transformers
 pip install triton
 pip install sentencepiece
 mkdir -p ./src
-git clone git@github.com:alekepd/mavenets.git ./src
+git clone https://github.com/SztainLab/mavenets.git ./src
 pip install -e ./src
 ```
 
