@@ -119,7 +119,7 @@ ALT_DATA_SPECS: Final = [
         index=10,
     ),
     DataSpec(
-        name="base_dedup_train.csv",
+        name="base_dedup",
         train_filename=Path("base_dedup_train.csv"),
         valid_filename=Path("base_dedup_valid.csv"),
         test_filename=Path("base_dedup_test.csv"),
