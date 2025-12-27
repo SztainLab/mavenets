@@ -116,7 +116,14 @@ ALT_DATA_SPECS: Final = [
         train_filename=Path("train_fullresplit_rng789.csv"),
         valid_filename=Path("val_fullresplit_rng789.csv"),
         test_filename=Path("test_fullresplit_rng789.csv"),
-        index=9,
+        index=10,
+    ),
+    DataSpec(
+        name="base_dedup_train.csv",
+        train_filename=Path("base_dedup_train.csv"),
+        valid_filename=Path("base_dedup_valid.csv"),
+        test_filename=Path("base_dedup_test.csv"),
+        index=11,
     ),
 ]
 
